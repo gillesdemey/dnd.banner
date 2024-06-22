@@ -6,9 +6,7 @@ function App() {
       <Poster
         title={"Storm King's Thunder"}
         subtitle={"The Doom of the Desert II"}
-        image={
-          "src/assets/the-doom-of-the-dessert-II/OIG3.mAduM2jU0JEaJH.BkQ6g.jpeg"
-        }
+        image={"the-doom-of-the-dessert-II/OIG3.mAduM2jU0JEaJH.BkQ6g.jpeg"}
         imageOffset={{ marginTop: -25, marginLeft: -50 }}
         when={
           <>
@@ -23,7 +21,7 @@ function App() {
       <Poster
         title={"Storm King's Thunder"}
         subtitle={"Release the Kraken!"}
-        image={"src/assets/release-the-kraken/OIG3.mAduM2jU0JEaJH.BkQ6g 1.png"}
+        image={"release-the-kraken/OIG3.mAduM2jU0JEaJH.BkQ6g 1.png"}
         imageOffset={{ marginTop: -120 }}
         when={
           <>
@@ -38,7 +36,7 @@ function App() {
       <Poster
         title={"Storm King's Thunder"}
         subtitle={"Besieged!"}
-        image={"src/assets/besieged/Hero image.png"}
+        image={"besieged/Hero image.png"}
         when={
           <>
             Wednesday, <strong>September 9</strong> at <strong>19h</strong>
@@ -52,7 +50,7 @@ function App() {
       <Poster
         title={"D&D Gent presents"}
         subtitle={"Free RPG Day"}
-        image={"src/assets/free-rpg-day/Hero image-2.jpg"}
+        image={"free-rpg-day/Hero image-2.jpg"}
         when={
           <>
             <strong>June 22-23</strong> from <strong>11h to 23h</strong>

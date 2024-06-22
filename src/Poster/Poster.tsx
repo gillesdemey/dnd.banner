@@ -44,7 +44,7 @@ const Poster = ({
         <div className={styles.Titles}>
           <h1 className={cx(styles.Title, fontColorStyle)}>{title}</h1>
           <div className={styles.SubtitleWrapper}>
-            <img height={140} src="src/assets/logo.7c6e5452.svg" />
+            <img height={140} src="logo.7c6e5452.svg" />
             <div className={cx(styles.Subtitle, fontColorStyle)}>
               <Textfit mode="single">{subtitle}</Textfit>
             </div>
