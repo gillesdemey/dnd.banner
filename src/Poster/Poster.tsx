@@ -1,8 +1,15 @@
-import { CSSProperties, ReactNode } from "react";
+import {
+  CSSProperties,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+} from "react";
 import { Textfit } from "react-textfit";
 
 import styles from "./Poster.module.css";
 import { css, cx } from "@emotion/css";
+import { useToPng } from "@hugocxl/react-to-image";
 
 type Props = {
   title: string;
@@ -31,6 +38,20 @@ const Poster = ({
 
   imageOffset,
 }: Props) => {
+  const savePng = useCallback((data: string) => {
+    const link = document.createElement("a");
+
+    link.download = "banner.png";
+    link.href = data;
+
+    link.click();
+  }, []);
+
+  const [_state, convert, ref] = useToPng<HTMLDivElement>({
+    onError: (err) => console.error(err),
+    onSuccess: savePng,
+  });
+
   const fontColorStyle = css({
     color: fontColor,
     borderColor: fontColor,
@@ -39,28 +60,33 @@ const Poster = ({
   const backgroundColorStyle = css({ background: backgroundColor });
 
   return (
-    <div className={cx(styles.Wrapper, backgroundColorStyle)}>
-      <div>
-        <div className={styles.Titles}>
-          <h1 className={cx(styles.Title, fontColorStyle)}>{title}</h1>
-          <div className={styles.SubtitleWrapper}>
-            <img height={140} src="logo.7c6e5452.svg" />
-            <div className={cx(styles.Subtitle, fontColorStyle)}>
-              <Textfit mode="single">{subtitle}</Textfit>
+    <>
+      <div ref={ref} className={cx(styles.Wrapper, backgroundColorStyle)}>
+        <div>
+          <div className={styles.Titles}>
+            <h1 className={cx(styles.Title, fontColorStyle)}>{title}</h1>
+            <div className={styles.SubtitleWrapper}>
+              <img height={140} src="logo.7c6e5452.svg" />
+              <div className={cx(styles.Subtitle, fontColorStyle)}>
+                <Textfit mode="single">{subtitle}</Textfit>
+              </div>
             </div>
           </div>
+          <div className={styles.ImageWrapper}>
+            <img className={styles.Image} style={imageOffset} src={image} />
+          </div>
         </div>
-        <div className={styles.ImageWrapper}>
-          <img className={styles.Image} style={imageOffset} src={image} />
+        <div className={cx(styles.When, fontColorStyle)}>
+          <Textfit mode="single" max={56}>
+            {when}
+          </Textfit>
         </div>
+        <div className={cx(styles.Where, fontColorStyle)}>{where}</div>
       </div>
-      <div className={cx(styles.When, fontColorStyle)}>
-        <Textfit mode="single" max={56}>
-          {when}
-        </Textfit>
-      </div>
-      <div className={cx(styles.Where, fontColorStyle)}>{where}</div>
-    </div>
+      <button className={styles.Save} onClick={convert}>
+        Save to PNG
+      </button>
+    </>
   );
 };
 
