@@ -1,10 +1,4 @@
-import {
-  CSSProperties,
-  ReactNode,
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-} from "react";
+import { CSSProperties, ReactNode, useCallback } from "react";
 import { Textfit } from "react-textfit";
 
 import styles from "./Poster.module.css";
