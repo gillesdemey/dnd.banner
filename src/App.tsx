@@ -58,7 +58,7 @@ function App() {
         }
         where={"Outpost Game Center Ghent"}
         fontColor={"#E5FFFE"}
-        backgroundColor={"#13656D"}
+        backgroundColor={"#0A5C47"}
       />
     </div>
   );
