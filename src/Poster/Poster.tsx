@@ -1,60 +1,48 @@
-import { CSSProperties, ReactNode, useCallback } from "react";
+import React, { ForwardedRef } from "react";
 import { Textfit } from "react-textfit";
 
 import styles from "./Poster.module.css";
 import { css, cx } from "@emotion/css";
-import { useToPng } from "@hugocxl/react-to-image";
 
-type Props = {
+export type PosterProps = {
   title: string;
   subtitle: string;
 
   image: string;
 
-  when: ReactNode;
+  when: string;
   where: string;
 
   fontColor?: string;
   backgroundColor?: string;
 
-  imageOffset?: CSSProperties;
+  imageOffset?: [number, number];
 };
 
-const Poster = ({
-  title,
-  subtitle,
-  image,
-  when,
-  where,
+const Poster = React.forwardRef(
+  (
+    {
+      title,
+      subtitle,
+      image,
+      when,
+      where,
 
-  fontColor,
-  backgroundColor,
+      fontColor,
+      backgroundColor,
 
-  imageOffset,
-}: Props) => {
-  const savePng = useCallback((data: string) => {
-    const link = document.createElement("a");
+      imageOffset,
+    }: PosterProps,
+    ref: ForwardedRef<HTMLDivElement>,
+  ) => {
+    const fontColorStyle = css({
+      color: fontColor,
+      borderColor: fontColor,
+    });
 
-    link.download = "banner.png";
-    link.href = data;
+    const backgroundColorStyle = css({ background: backgroundColor });
 
-    link.click();
-  }, []);
-
-  const [_state, convert, ref] = useToPng<HTMLDivElement>({
-    onError: (err) => console.error(err),
-    onSuccess: savePng,
-  });
-
-  const fontColorStyle = css({
-    color: fontColor,
-    borderColor: fontColor,
-  });
-
-  const backgroundColorStyle = css({ background: backgroundColor });
-
-  return (
-    <>
+    return (
       <div ref={ref} className={cx(styles.Wrapper, backgroundColorStyle)}>
         <div>
           <div className={styles.Titles}>
@@ -67,21 +55,25 @@ const Poster = ({
             </div>
           </div>
           <div className={styles.ImageWrapper}>
-            <img className={styles.Image} style={imageOffset} src={image} />
+            <img
+              className={styles.Image}
+              style={{
+                marginTop: imageOffset?.[0],
+                marginLeft: imageOffset?.[1],
+              }}
+              src={image}
+            />
           </div>
         </div>
         <div className={cx(styles.When, fontColorStyle)}>
           <Textfit mode="single" max={56}>
-            {when}
+            <span dangerouslySetInnerHTML={{ __html: when }} />
           </Textfit>
         </div>
         <div className={cx(styles.Where, fontColorStyle)}>{where}</div>
       </div>
-      <button className={styles.Save} onClick={convert}>
-        Save to PNG
-      </button>
-    </>
-  );
-};
+    );
+  },
+);
 
 export default Poster;

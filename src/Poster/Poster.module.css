@@ -102,6 +102,11 @@ h2 {
 
   overflow: hidden;
   background: transparent;
+
+  img {
+    width: 100%;
+    height: auto;
+  }
 }
 
 .When {
