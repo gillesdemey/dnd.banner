@@ -1,13 +1,31 @@
-import { useCallback } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import { useToPng } from "@hugocxl/react-to-image";
 import { useForm } from "react-hook-form";
-
-import styles from "./Editor.module.css";
-import Poster from "../Poster/Poster";
+import {
+  Cropper,
+  CropperPreview,
+  CropperPreviewRef,
+  CropperRef,
+} from "react-advanced-cropper";
 import styled from "@emotion/styled";
 import { marked } from "marked";
 
+import Poster from "../Poster/Poster";
+
+import styles from "./Editor.module.css";
+import "react-advanced-cropper/dist/style.css";
+
+const ASPECT_RATIO = 880 / 566;
+
+type Image = {
+  src: string;
+  type?: string;
+};
+
 function Editor() {
+  const [image, setImage] = useState<Image | null>(null);
+  const previewRef = useRef<CropperPreviewRef>(null);
+
   const form = useForm({
     defaultValues: {
       title: "Echoes of the Abyss",
@@ -21,10 +39,6 @@ function Editor() {
     },
   });
 
-  const onSubmit = () => {
-    saveAsPNG();
-  };
-
   const downloadBlob = useCallback(
     (data: string) => {
       const link = document.createElement("a");
@@ -37,10 +51,41 @@ function Editor() {
     [form],
   );
 
-  const [_state, saveAsPNG, ref] = useToPng<HTMLDivElement>({
+  const [saveState, saveAsPNG, ref] = useToPng<HTMLDivElement>({
     onError: (err) => console.error(err),
     onSuccess: downloadBlob,
   });
+
+  const onSubmit = useCallback(() => saveAsPNG(), [saveAsPNG]);
+
+  const onUpdateCrop = useCallback((cropper: CropperRef) => {
+    previewRef.current?.update(cropper);
+  }, []);
+
+  const onLoadImage = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    const { files } = event.target;
+    const uploadedFile = files?.[0];
+
+    // Ensure that you have a file before attempting to read it
+    if (uploadedFile) {
+      // Create the blob link to the file to optimize performance:
+      const blob = URL.createObjectURL(uploadedFile);
+
+      setImage({
+        src: blob,
+        type: uploadedFile.type,
+      });
+    }
+  }, []);
+
+  // garbage collect the Blob
+  useEffect(() => {
+    return () => {
+      if (image?.src) {
+        URL.revokeObjectURL(image.src);
+      }
+    };
+  }, [image]);
 
   return (
     <div className={styles.EditorWrapper}>
@@ -62,7 +107,15 @@ function Editor() {
             type="file"
             accept="image/png, image/jpeg, image/webp"
             {...form.register("image")}
+            onChange={onLoadImage}
           />
+          {image?.src && (
+            <Cropper
+              src={image.src}
+              onUpdate={onUpdateCrop}
+              aspectRatio={{ minimum: ASPECT_RATIO, maximum: ASPECT_RATIO }}
+            />
+          )}
         </Field>
         {/* when */}
         <Field>
@@ -87,7 +140,9 @@ function Editor() {
           <Input type="color" {...form.register("backgroundColor")} />
         </Field>
 
-        <Submit type="submit">Save as PNG</Submit>
+        <Submit type="submit" disabled={saveState.isLoading}>
+          Save as PNG
+        </Submit>
       </Form>
 
       <div className={styles.Preview}>
@@ -96,7 +151,7 @@ function Editor() {
           ref={ref}
           title={form.watch("title")}
           subtitle={form.watch("subTitle")}
-          image={form.watch("image")}
+          image={<CropperPreview ref={previewRef} />}
           imageOffset={form.watch("imageOffset")}
           // @ts-expect-error parseInline only return Promise<string> when async is true
           when={marked.parseInline(form.watch("when"), { async: false })}
