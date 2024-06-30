@@ -59,7 +59,13 @@ const Poster = React.forwardRef(
             </div>
           </div>
           {/* hero image, make it look epic! */}
-          <div className={styles.ImageWrapper}>{image}</div>
+          <div className={styles.ImageWrapper}>
+            {image}
+            {/* ribbon */}
+            <div className={styles.Ribbon}>
+              <span className={styles.RibbonText}>FREE EVENT</span>
+            </div>
+          </div>
         </div>
         {/* when? */}
         <div className={cx(styles.When, fontColorStyle)}>
