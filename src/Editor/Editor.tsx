@@ -26,13 +26,24 @@ function Editor() {
   const [image, setImage] = useState<Image | null>(null);
   const previewRef = useRef<CropperPreviewRef>(null);
 
+  const today = Intl.DateTimeFormat("en-us", {
+    month: "long",
+    day: "numeric",
+  }).format();
+
+  const dayOfWeek = Intl.DateTimeFormat("en-us", {
+    weekday: "long",
+  }).format();
+
+  const hour = "19";
+
   const form = useForm({
     defaultValues: {
       title: "Echoes of the Abyss",
       subTitle: "The Shadowspire",
       image: "/the shadowspire/_9184f7ad-d139-4bc6-9d1f-9e028d1ec395.jpg",
       imageOffset: [0, 0] as [number, number],
-      when: "Wednesday, **June 19** at **19h**",
+      when: `${dayOfWeek}, **${today}** at **${hour}h**`,
       where: "World's End Comics & Games",
       fontColor: "#e9b3e7",
       backgroundColor: "#270845",
